@@ -6,23 +6,9 @@ app.use(express.json())
 
 const currentUsers = []
 
-const user = [
-    {
-        username: 'bobesponja',
-        avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info"
-    }
-]
+const responseArray = []
 
-const tweets = [
-
-    {
-        id: 1,
-        username: "bobesponja",
-        tweet: "eu amo o hub"
-    }
-
-]
-
+const tweets = []
 
 app.post("/sign-up", (req, resp) => {
 
@@ -30,48 +16,61 @@ app.post("/sign-up", (req, resp) => {
 
     currentUsers.push({
 
-        id: tweets.length + 1,
+        id: currentUsers.length + 1,
         username,
         avatar
     })
-    /* tweets.push({
 
-        id: tweets.length + 1,
-        username,
-        avatar
-    }) */
-
-    resp.send("OK")
+    resp.send(currentUsers)
+    //resp.send("OK")
 
 })
 
 
 app.post("/tweets", (req, resp) => {
 
-    const { username, tweet } = req.body
+    const { username, tweet} = req.body
 
     tweets.push({
 
-        id: tweets.length + 1,
+        id: currentUsers.length + 1,
         username,
         tweet
-    }) 
+    })
 
-    resp.send("OK")
+    resp.send(currentUsers)
+    //resp.send("OK")
 
 })
 
 app.get("/tweets", (req, res) => {
     let n = tweets.length
 
-    let response = tweets
+    tweets.forEach((obj) => {
+
+        let correspondingobj = (currentUsers.find((user) => user.username === obj.username))
+
+        const { avatar } = correspondingobj
+        const { username, tweet } = obj
+
+
+        responseArray.push({
+            id: responseArray.length + 1,
+            avatar,
+            username,
+            tweet
+        })
+
+    })
 
     if (n > 10) {
 
-        response = tweets.slice(n - 10, n)
+        let response = tweets.slice(n - 10, n)
+        res.send(response)
+        return 
     }
 
-    res.send(response)
+   res.send(responseArray)
 
 })
 
