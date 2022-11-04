@@ -45,6 +45,22 @@ app.post("/sign-up", (req, resp) => {
 
 })
 
+
+app.post("/tweets", (req, resp) => {
+
+    const { username, tweet } = req.body
+
+    tweets.push({
+
+        id: tweets.length + 1,
+        username,
+        tweet
+    }) 
+
+    resp.send("OK")
+
+})
+
 app.get("/tweets", (req, res) => {
     let n = tweets.length
 
