@@ -1,14 +1,14 @@
 import express, { response } from "express";
 import cors from "cors"
 
+let currentUsers = []
+let tweets = []
+
 const app = express()
+app.use(cors())
 app.use(express.json())
 
-const currentUsers = []
 
-const responseArray = []
-
-const tweets = []
 
 app.post("/sign-up", (req, resp) => {
 
@@ -21,36 +21,42 @@ app.post("/sign-up", (req, resp) => {
         avatar
     })
 
-    resp.send(currentUsers)
-    //resp.send("OK")
+    resp.status(201).send("OK")
+    
 
 })
 
 
 app.post("/tweets", (req, resp) => {
 
-    const { username, tweet} = req.body
+    const { username, tweet } = req.body
+    let userExist = (currentUsers.find((user) => user.username === username))
 
+    if (userExist === undefined) {
+        resp.status(404).send("Esse usuario nao existe")
+        return
+    }
     tweets.push({
 
-        id: currentUsers.length + 1,
+        id: tweets.length + 1,
         username,
         tweet
     })
 
-    resp.send(currentUsers)
-    //resp.send("OK")
+    resp.status(201).send("OK")
+
 
 })
 
 app.get("/tweets", (req, res) => {
     let n = tweets.length
-
+    let response = []
+    const responseArray = []
     tweets.forEach((obj) => {
 
         let correspondingobj = (currentUsers.find((user) => user.username === obj.username))
 
-        const { avatar } = correspondingobj
+        const avatar = correspondingobj.avatar
         const { username, tweet } = obj
 
 
@@ -65,12 +71,13 @@ app.get("/tweets", (req, res) => {
 
     if (n > 10) {
 
-        let response = tweets.slice(n - 10, n)
+        response = responseArray.slice(n - 10, n)
         res.send(response)
-        return 
     }
-
-   res.send(responseArray)
+    else {
+        response = responseArray
+        res.send(response)
+    }
 
 })
 
